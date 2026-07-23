@@ -734,29 +734,24 @@ function setSendBtn(disabled) {
    CALL OVERLAY — WA Style
 ================================================================ */
 /* ================================================================
-   VOICE CALL — dua arah: user bicara → AI jawab pakai TTS
+   VOICE CALL — sederhana & stabil
 ================================================================ */
-let recognition     = null;
-let callListening   = false;
+let recognition      = null;
+let callListening    = false;
 let callSilenceTimer = null;
 
 async function startCall() {
   if (callActive) return;
 
-  // Cek browser support
   const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
-  if (!SR) {
-    showToast('Browser kamu tidak mendukung fitur suara 😢', 3000);
-    return;
-  }
+  if (!SR) { showToast('Browser tidak mendukung fitur suara 😢', 3000); return; }
 
-  // Minta izin mikrofon dulu sebelum buka overlay
+  // Minta izin mikrofon di awal
   try {
     const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-    // Langsung matikan stream-nya, kita cuma butuh izin
     stream.getTracks().forEach(t => t.stop());
-  } catch (err) {
-    showToast('Izin mikrofon diperlukan untuk fitur panggilan ', 3500);
+  } catch(err) {
+    showToast('Izin mikrofon diperlukan untuk fitur panggilan 🎤', 3500);
     return;
   }
 
@@ -766,13 +761,9 @@ async function startCall() {
   if (!overlay) return;
 
   overlay.classList.add('active');
-  callActive    = true;
-  muteActive    = false;
-  speakerActive = false;
-  callSeconds   = 0;
-  timer.textContent = '';
+  callActive = true; muteActive = false; speakerActive = false;
+  callSeconds = 0; timer.textContent = '';
 
-  // Fix avatar
   const avatarImg = overlay.querySelector('.call-avatar img');
   if (avatarImg) {
     avatarImg.style.display = 'block';
@@ -783,75 +774,37 @@ async function startCall() {
     };
   }
 
-  // Phase 1: Menghubungi
   status.textContent = 'Menghubungi...';
-  await sleep(1500);
-  if (!callActive) return;
+  await sleep(1500); if (!callActive) return;
 
-  // Phase 2: Berdering
   status.textContent = 'Berdering...';
   playRing();
-  await sleep(2000);
-  if (!callActive) return;
+  await sleep(2000); if (!callActive) return;
 
-  // Phase 3: Terhubung
   stopRing();
   status.textContent = 'Terhubung';
+  callTimerInt = setInterval(() => { callSeconds++; timer.textContent = fmtTime(callSeconds); }, 1000);
 
-  callTimerInt = setInterval(() => {
-    callSeconds++;
-    timer.textContent = fmtTime(callSeconds);
-  }, 1000);
-
-  // Sapa pembuka singkat & natural
   await speakTTSAsync('Ada yang bisa saya bantu kak?');
   if (!callActive) return;
 
-  // Mulai dengarkan user
   startListening();
 }
-
-function playSilent() {
-  try {
-    const ctx = new (window.AudioContext || window.webkitAudioContext)();
-    const buf = ctx.createBuffer(1, 1, 22050);
-    const src = ctx.createBufferSource();
-    src.buffer = buf;
-    src.connect(ctx.destination);
-    src.start(0);
-    setTimeout(() => ctx.close(), 300);
-  } catch(e) {}
-}
-
-/*
-  ALUR PANGGILAN:
-  startListening() → user bicara → onresult final
-    → getCallAIReply() → speakTTSAsync()
-    → selesai → startListening() lagi
-
-  Interrupt: onspeechstart deteksi user bicara saat TTS jalan
-    → stopTTS() → TTS resolve → startListening() lagi normal
-*/
-
-let callTTSAborted = false; // flag: TTS dipotong paksa oleh user
 
 function startListening() {
   if (!callActive || muteActive) return;
   const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
   if (!SR) return;
 
-  if (recognition) {
-    try { recognition.abort(); } catch(e) {}
-    recognition = null;
-  }
+  if (recognition) { try { recognition.abort(); } catch(e) {} recognition = null; }
 
   const status = document.getElementById('callStatus');
   if (status) status.textContent = 'Mendengarkan...';
 
   recognition = new SR();
-  recognition.lang           = 'id-ID';
-  recognition.continuous     = false;
-  recognition.interimResults = false;
+  recognition.lang            = 'id-ID';
+  recognition.continuous      = false;
+  recognition.interimResults  = false;
   recognition.maxAlternatives = 1;
 
   recognition.onstart = () => { callListening = true; };
@@ -861,104 +814,44 @@ function startListening() {
     const text = e.results[0][0].transcript.trim();
     if (!text || !callActive) return;
 
-    if (recognition) {
-      try { recognition.abort(); } catch(e2) {}
-      recognition = null;
-    }
-
     if (status) status.textContent = 'Memproses...';
-    const aiReply = await getCallAIReply(text);
+    const reply = await getCallAIReply(text);
     if (!callActive) return;
 
-    callTTSAborted = false;
     if (status) status.textContent = 'Berbicara...';
-    await speakTTSAsync(aiReply);
+    await speakTTSAsync(reply);
     if (!callActive) return;
 
-    // Jeda singkat sebelum dengarkan lagi
-    setTimeout(() => { if (callActive && !muteActive) startListening(); }, 400);
+    startListening();
   };
 
   recognition.onerror = (e) => {
     callListening = false;
     if (!callActive) return;
+    if (e.error === 'aborted') return;
     if (e.error === 'no-speech') {
-      // Tidak ada suara → tanya singkat lalu dengarkan lagi
-      callSilenceTimer = setTimeout(async () => {
-        if (!callActive || muteActive) return;
-        await speakTTSAsync('Masih ada kak?');
-        if (callActive && !muteActive) startListening();
-      }, 800);
+      if (callActive && !muteActive) startListening();
       return;
     }
-    if (e.error === 'aborted') return;
-    // Error lain: coba lagi
-    setTimeout(() => { if (callActive && !muteActive) startListening(); }, 800);
+    setTimeout(() => { if (callActive && !muteActive) startListening(); }, 1000);
   };
 
   recognition.onend = () => { callListening = false; };
 
-  playSilent();
-  setTimeout(() => {
-    if (!callActive || muteActive) return;
-    try { recognition?.start(); } catch(e) {}
-  }, 150);
-}
-
-// speakTTSAsync versi interrupt-aware:
-// Kalau user mulai bicara saat AI ngomong, TTS dipotong
-// dan recognition baru dimulai untuk tangkap ucapan user
-function _hookInterrupt(utterance) {
-  const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
-  if (!SR) return;
-
-  // Gunakan recognition sementara khusus untuk deteksi suara user
-  let interruptRec = new SR();
-  interruptRec.lang = 'id-ID';
-  interruptRec.continuous = false;
-  interruptRec.interimResults = true;
-  interruptRec.maxAlternatives = 1;
-
-  interruptRec.onspeechstart = () => {
-    // User mulai bicara → potong TTS
-    stopTTS(); // utterance.onend/onerror akan resolve speakTTSAsync
-    try { interruptRec.stop(); } catch(e) {}
-    interruptRec = null;
-    callTTSAborted = true;
-  };
-
-  interruptRec.onerror = () => {
-    try { interruptRec?.abort(); } catch(e) {}
-    interruptRec = null;
-  };
-  interruptRec.onend = () => {
-    interruptRec = null;
-  };
-
-  playSilent();
-  try { interruptRec.start(); } catch(e) { interruptRec = null; }
-
-  // Simpan ref agar bisa di-abort saat TTS selesai normal
-  utterance._interruptRec = interruptRec;
+  try { recognition.start(); } catch(e) {}
 }
 
 async function getCallAIReply(userText) {
   try {
-    // Tambah ke history percakapan call sementara
-    const callMessages = [
-      ...chatHistory,
-      { role: 'user', content: userText }
-    ];
-
     const res = await fetch(API_PRIMARY, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ messages: callMessages, stream: false }),
+      body: JSON.stringify({ messages: [...chatHistory, { role: 'user', content: userText }], stream: false }),
       signal: AbortSignal.timeout(12000)
     });
-    if (!res.ok) throw new Error('primary failed');
+    if (!res.ok) throw new Error('failed');
     const data = await res.json();
-    return data.text || 'Maaf kak, ada gangguan kecil. Silakan ulangi ya 😊';
+    return data.text || 'Maaf kak, ada gangguan. Silakan ulangi ya 😊';
   } catch {
     try {
       const res2 = await fetch(API_FALLBACK, {
@@ -970,76 +863,50 @@ async function getCallAIReply(userText) {
       const d = await res2.json();
       return d.text || d.message || 'Maaf kak, coba hubungi via WhatsApp ya 😊';
     } catch {
-      return 'Maaf kak, koneksi bermasalah. Silakan hubungi via WhatsApp ya 😊';
+      return 'Maaf kak, koneksi bermasalah. Hubungi kami via WhatsApp ya 😊';
     }
   }
 }
 
-// TTS yang return Promise — resolve saat selesai ATAU dipotong user
 function speakTTSAsync(text) {
   return new Promise(resolve => {
     if (!('speechSynthesis' in window) || muteActive) { resolve(); return; }
     stopTTS();
-
-    function doSpeak() {
+    const voices = speechSynthesis.getVoices();
+    const speak = () => {
       const utter = new SpeechSynthesisUtterance(text);
-      utter.lang   = 'id-ID';
-      utter.rate   = 1.0;
-      utter.pitch  = 1.1;
-      utter.volume = 1.0;
-      const voices = speechSynthesis.getVoices();
-      const v =
-        voices.find(v => v.lang.startsWith('id') && /female|wanita/i.test(v.name)) ||
-        voices.find(v => v.lang.startsWith('id')) ||
-        voices.find(v => /female|woman/i.test(v.name));
+      utter.lang = 'id-ID'; utter.rate = 1.0; utter.pitch = 1.1; utter.volume = 1.0;
+      const v = voices.find(v => v.lang.startsWith('id') && /female|wanita/i.test(v.name))
+             || voices.find(v => v.lang.startsWith('id'))
+             || voices.find(v => /female|woman/i.test(v.name));
       if (v) utter.voice = v;
-
-      const done = () => {
-        if (utter._interruptRec) {
-          try { utter._interruptRec.abort(); } catch(e) {}
-          utter._interruptRec = null;
-        }
-        resolve();
-      };
-      utter.onend   = done;
-      utter.onerror = done;
+      utter.onend = resolve; utter.onerror = resolve;
       speechSynthesis.speak(utter);
-
-      // Pasang pendengar interrupt jika sedang call
-      if (callActive) _hookInterrupt(utter);
-    }
-
-    if (speechSynthesis.getVoices().length > 0) doSpeak();
-    else speechSynthesis.addEventListener('voiceschanged', doSpeak, { once: true });
+    };
+    if (speechSynthesis.getVoices().length > 0) speak();
+    else speechSynthesis.addEventListener('voiceschanged', speak, { once: true });
   });
 }
 
 function endCall(auto = false) {
-  callActive    = false;
-  callListening = false;
-  callTTSAborted = false;
-  stopRing();
-  stopTTS();
-  clearInterval(callTimerInt);
-  clearTimeout(callAutoEndTimer);
-  clearTimeout(callSilenceTimer);
+  callActive = false; callListening = false;
+  stopRing(); stopTTS();
+  clearInterval(callTimerInt); clearTimeout(callAutoEndTimer); clearTimeout(callSilenceTimer);
   callTimerInt = null;
-
-  try { recognition?.abort(); } catch(e) {}
-  recognition = null;
+  try { recognition?.abort(); } catch(e) {} recognition = null;
 
   const status = document.getElementById('callStatus');
   if (status) status.textContent = auto ? 'Panggilan Berakhir' : 'Panggilan Diakhiri';
 
   setTimeout(() => {
     document.getElementById('call-overlay')?.classList.remove('active');
-    const t = document.getElementById('callTimer');
-    if (t) t.textContent = '';
+    const t = document.getElementById('callTimer'); if (t) t.textContent = '';
     document.getElementById('muteBtn')?.classList.remove('active');
     document.getElementById('speakerBtn')?.classList.remove('active');
     muteActive = speakerActive = false;
   }, 900);
 }
+
 
 function toggleMute() {
   muteActive = !muteActive;

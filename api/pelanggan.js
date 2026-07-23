@@ -80,7 +80,7 @@ export default async function handler(req) {
     const contents = buildGeminiContents(messages, imageBase64, imageMimeType);
 
     // Call Gemini
-    const geminiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-lite:${stream ? 'streamGenerateContent?alt=sse&' : 'generateContent?'}key=${GEMINI_API_KEY}`;
+    const geminiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:${stream ? 'streamGenerateContent?alt=sse&' : 'generateContent?'}key=${GEMINI_API_KEY}`;
 
     const geminiBody = {
       system_instruction: {

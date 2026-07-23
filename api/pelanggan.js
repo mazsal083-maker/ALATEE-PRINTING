@@ -30,14 +30,14 @@ LAYANAN ALATEE PRINTING:
 - Undangan & Souvenir
 - Nota & Kwitansi
 - Spanduk MMT, Flexi Korea
-
+- Semunya bisa suruh langsung datang ke toko
 HARGA ESTIMASI:
 - Banner MMT: mulai Rp 15.000/m²
 - Kartu Nama 1 box (100 lembar): mulai Rp 25.000
 - Flyer A5 100 lembar: mulai Rp 45.000
 - Roll Up Banner: mulai Rp 150.000
 - Stiker vinyl per m²: mulai Rp 50.000
-
+- kalo kamu Gak tahu harganya ya suruh chat nomer wa aja
 PROSES PEMESANAN:
 1. Konsultasi desain/ukuran
 2. Kirim file desain (CDR, AI, PDF, PNG resolusi tinggi)
@@ -47,7 +47,7 @@ PROSES PEMESANAN:
 
 KONTAK:
 - WhatsApp: ${WA_NUMBER}
-- Lokasi: Pamekasan, Madura, Jawa Timur
+- Lokasi: Guluk-Guluk ,Sumenep, Madura, Jawa Timur
 
 ATURAN:
 - Hanya topik Alatee Printing & cetak. Kalau nanya di luar, alihkan santai
@@ -80,7 +80,7 @@ export default async function handler(req) {
     const contents = buildGeminiContents(messages, imageBase64, imageMimeType);
 
     // Call Gemini
-    const geminiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:${stream ? 'streamGenerateContent?alt=sse&' : 'generateContent?'}key=${GEMINI_API_KEY}`;
+    const geminiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-lite:${stream ? 'streamGenerateContent?alt=sse&' : 'generateContent?'}key=${GEMINI_API_KEY}`;
 
     const geminiBody = {
       system_instruction: {

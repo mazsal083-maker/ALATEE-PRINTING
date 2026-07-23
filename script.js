@@ -811,6 +811,10 @@ async function startCall() {
   startListening();
 }
 
+// ── NEW: state flags untuk continuous mic ──
+let isSpeaking   = false; // true saat TTS AI sedang jalan
+let isProcessing = false; // true saat menunggu respons API
+
 // Suppress browser's built-in click/beep sound when recognition starts
 // by playing a silent audio via AudioContext right before .start()
 function playSilent() {
@@ -830,74 +834,80 @@ function startListening() {
   const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
   if (!SR) return;
 
+  // Hentikan instance sebelumnya
+  if (recognition) {
+    try { recognition.abort(); } catch(e) {}
+    recognition = null;
+  }
+
   const status = document.getElementById('callStatus');
 
   recognition = new SR();
-  recognition.lang = 'id-ID';
-  recognition.continuous = false;
-  recognition.interimResults = true; // interim supaya bisa deteksi user mulai bicara
+  recognition.lang            = 'id-ID';
+  recognition.continuous      = true;  // MIC TERUS MENYALA — tidak pernah mati
+  recognition.interimResults  = true;  // deteksi awal suara untuk interrupt
   recognition.maxAlternatives = 1;
 
   recognition.onstart = () => {
     callListening = true;
-    if (status) status.textContent = 'Mendengarkan...';
+    if (status && !isSpeaking && !isProcessing) status.textContent = 'Mendengarkan...';
   };
 
-  // Deteksi user mulai bicara → langsung stop TTS (interrupt)
+  // User mulai bicara → potong TTS seketika
   recognition.onspeechstart = () => {
-    if (speechSynthesis.speaking) {
-      stopTTS(); // potong AI kalau masih ngomong
+    if (isSpeaking) {
+      stopTTS();
+      isSpeaking = false;
     }
-    if (status) status.textContent = 'Mendengarkan...';
+    if (status && !isProcessing) status.textContent = 'Mendengarkan...';
   };
 
   recognition.onresult = async (e) => {
-    // Kalau ini interim result, stop TTS dulu tapi jangan proses
-    if (!e.results[0].isFinal) {
-      stopTTS();
+    const result = e.results[e.results.length - 1];
+
+    // Interim: hanya interrupt TTS, jangan proses dulu
+    if (!result.isFinal) {
+      if (isSpeaking) { stopTTS(); isSpeaking = false; }
       return;
     }
 
-    callListening = false;
-    clearTimeout(callSilenceTimer);
-    const text = e.results[0][0].transcript.trim();
-    if (!text || !callActive) return;
+    // Final — abaikan kalau sedang proses atau mute
+    const text = result[0].transcript.trim();
+    if (!text || !callActive || muteActive || isProcessing) return;
 
+    isProcessing = true;
     if (status) status.textContent = 'Memproses...';
 
-    // Kirim ke AI, dapatkan respons teks
     const aiReply = await getCallAIReply(text);
-    if (!callActive) return;
+    if (!callActive) { isProcessing = false; return; }
 
-    // Bacakan jawaban AI
+    isSpeaking = true;
+    if (status) status.textContent = 'Berbicara...';
+
     await speakTTSAsync(aiReply);
-    if (!callActive) return;
 
-    // Dengarkan lagi
-    startListening();
+    isSpeaking   = false;
+    isProcessing = false;
+    if (callActive && !muteActive && status) status.textContent = 'Mendengarkan...';
+    // mic tetap menyala (continuous) — tidak perlu restart
   };
 
   recognition.onerror = (e) => {
-    callListening = false;
     if (!callActive) return;
-    if (e.error === 'no-speech') {
-      callSilenceTimer = setTimeout(() => {
-        if (callActive && !callListening) {
-          speakTTSAsync('Masih ada kak?').then(() => {
-            if (callActive) startListening();
-          });
-        }
-      }, 1000);
-    } else if (e.error !== 'aborted') {
-      if (callActive) startListening(); // coba lagi
-    }
+    if (e.error === 'aborted' || e.error === 'no-speech') return; // normal, abaikan
+    // Error lain: restart setelah jeda singkat
+    callListening = false;
+    setTimeout(() => { if (callActive && !muteActive) startListening(); }, 600);
   };
 
   recognition.onend = () => {
     callListening = false;
+    // Browser auto-stop recognition? Restart kalau call masih aktif
+    if (callActive && !muteActive) {
+      setTimeout(() => { if (callActive && !muteActive) startListening(); }, 300);
+    }
   };
 
-  // Play silent audio dulu untuk suppress browser click sound
   playSilent();
   try { recognition.start(); } catch(e) {}
 }
@@ -964,8 +974,10 @@ function speakTTSAsync(text) {
 }
 
 function endCall(auto = false) {
-  callActive = false;
+  callActive   = false;
   callListening = false;
+  isSpeaking   = false;
+  isProcessing = false;
   stopRing();
   stopTTS();
   clearInterval(callTimerInt);
@@ -973,7 +985,7 @@ function endCall(auto = false) {
   clearTimeout(callSilenceTimer);
   callTimerInt = null;
 
-  try { recognition?.stop(); recognition?.abort(); } catch(e) {}
+  try { recognition?.abort(); } catch(e) {}
   recognition = null;
 
   const status = document.getElementById('callStatus');
@@ -995,8 +1007,13 @@ function toggleMute() {
   showToast(muteActive ? 'Mikrofon dimatikan' : 'Mikrofon aktif');
   if (muteActive) {
     stopTTS();
-    try { recognition?.stop(); } catch(e) {}
+    isSpeaking = false;
+    try { recognition?.abort(); } catch(e) {}
+    recognition = null;
+    const status = document.getElementById('callStatus');
+    if (status) status.textContent = 'Mute';
   } else if (callActive) {
+    isProcessing = false;
     startListening();
   }
 }
@@ -1152,7 +1169,9 @@ function showToast(msg, dur = 2400) {
 function initGaleriSlider() {
   const slider = document.getElementById('galeriSlider');
   const dotsEl = document.getElementById('galeriDots');
-  if (!slider) return;
+  if (!slider || !dotsEl) return;
+  // Guard: jangan init dua kali
+  if (dotsEl.children.length > 0) return;
 
   const slides = slider.querySelectorAll('.galeri-slide');
   const total  = slides.length;
@@ -1234,5 +1253,4 @@ function initGaleriSlider() {
   startAuto();
 }
 
-// Jalankan setelah page load
-window.addEventListener('load', () => { setTimeout(initGaleriSlider, 500); });
+// initGaleriSlider sudah dipanggil dari dismissLoading — tidak perlu dipanggil lagi di sini

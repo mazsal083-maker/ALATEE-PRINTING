@@ -1,7 +1,7 @@
 'use strict';
 
 /* ── CONFIG ──────────────────────────────────────────── */
-const WA_NUMBER    = '6281234567890';
+const WA_NUMBER    = '6287765146075';
 const API_PRIMARY  = '/api/pelanggan';
 const API_FALLBACK = '/api/pelanggan2';
 
@@ -381,8 +381,7 @@ function openChat() {
   const msgs = document.getElementById('chatMessages');
   if (msgs && msgs.children.length === 0) {
     setTimeout(() => {
-      appendMessage('assistant',
-        'Halo kak! Selamat datang di Alatee Printing. Saya Ayla, siap bantu kaka seputar layanan cetak kami. Ada yang bisa Ayla bantu hari ini?');
+      appendMessage('assistant', 'Ada yang bisa saya bantu kak? 😊');
     }, 350);
   }
 }
@@ -751,6 +750,16 @@ async function startCall() {
     return;
   }
 
+  // Minta izin mikrofon dulu sebelum buka overlay
+  try {
+    const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+    // Langsung matikan stream-nya, kita cuma butuh izin
+    stream.getTracks().forEach(t => t.stop());
+  } catch (err) {
+    showToast('Izin mikrofon diperlukan untuk fitur panggilan ', 3500);
+    return;
+  }
+
   const overlay = document.getElementById('call-overlay');
   const status  = document.getElementById('callStatus');
   const timer   = document.getElementById('callTimer');
@@ -794,12 +803,26 @@ async function startCall() {
     timer.textContent = fmtTime(callSeconds);
   }, 1000);
 
-  // Sapa pembuka
-  await speakTTSAsync('Halo kak! Selamat datang di Alatee Printing, saya Ayla. Ada yang bisa saya bantu kak?');
+  // Sapa pembuka singkat & natural
+  await speakTTSAsync('Ada yang bisa saya bantu kak?');
   if (!callActive) return;
 
   // Mulai dengarkan user
   startListening();
+}
+
+// Suppress browser's built-in click/beep sound when recognition starts
+// by playing a silent audio via AudioContext right before .start()
+function playSilent() {
+  try {
+    const ctx = new (window.AudioContext || window.webkitAudioContext)();
+    const buf = ctx.createBuffer(1, 1, 22050);
+    const src = ctx.createBufferSource();
+    src.buffer = buf;
+    src.connect(ctx.destination);
+    src.start(0);
+    setTimeout(() => ctx.close(), 200);
+  } catch(e) {}
 }
 
 function startListening() {
@@ -812,15 +835,29 @@ function startListening() {
   recognition = new SR();
   recognition.lang = 'id-ID';
   recognition.continuous = false;
-  recognition.interimResults = false;
+  recognition.interimResults = true; // interim supaya bisa deteksi user mulai bicara
   recognition.maxAlternatives = 1;
 
   recognition.onstart = () => {
     callListening = true;
-    if (status) status.textContent = '🎤 Mendengarkan...';
+    if (status) status.textContent = 'Mendengarkan...';
+  };
+
+  // Deteksi user mulai bicara → langsung stop TTS (interrupt)
+  recognition.onspeechstart = () => {
+    if (speechSynthesis.speaking) {
+      stopTTS(); // potong AI kalau masih ngomong
+    }
+    if (status) status.textContent = 'Mendengarkan...';
   };
 
   recognition.onresult = async (e) => {
+    // Kalau ini interim result, stop TTS dulu tapi jangan proses
+    if (!e.results[0].isFinal) {
+      stopTTS();
+      return;
+    }
+
     callListening = false;
     clearTimeout(callSilenceTimer);
     const text = e.results[0][0].transcript.trim();
@@ -844,15 +881,14 @@ function startListening() {
     callListening = false;
     if (!callActive) return;
     if (e.error === 'no-speech') {
-      // Tidak ada suara 5 detik → tanya lagi
       callSilenceTimer = setTimeout(() => {
         if (callActive && !callListening) {
-          speakTTSAsync('Masih ada kak? Silakan bicara ya 😊').then(() => {
+          speakTTSAsync('Masih ada kak?').then(() => {
             if (callActive) startListening();
           });
         }
       }, 1000);
-    } else {
+    } else if (e.error !== 'aborted') {
       if (callActive) startListening(); // coba lagi
     }
   };
@@ -861,6 +897,8 @@ function startListening() {
     callListening = false;
   };
 
+  // Play silent audio dulu untuk suppress browser click sound
+  playSilent();
   try { recognition.start(); } catch(e) {}
 }
 

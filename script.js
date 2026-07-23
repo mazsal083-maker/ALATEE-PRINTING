@@ -183,21 +183,29 @@ runLdTyping();
 /* ================================================================
    WINDOW LOAD
 ================================================================ */
-window.addEventListener('load', () => {
-  setTimeout(() => {
-    const ls = document.getElementById('loading-screen');
-    if (ls) {
-      ls.classList.add('hidden');
-      setTimeout(() => { ls.style.display = 'none'; }, 550);
-    }
-    initCountUp();
-    initReveal();
-    initHeroTyping();
-    fixNavLogo();
-    initGaleri();
-    preloadVoices();
-  }, 2400);
-});
+/* ── Tutup loading secepat mungkin setelah DOM siap ── */
+function dismissLoading() {
+  const ls = document.getElementById('loading-screen');
+  if (!ls || ls.style.display === 'none') return;
+  ls.classList.add('hidden');
+  setTimeout(() => { ls.style.display = 'none'; }, 500);
+  initCountUp();
+  initReveal();
+  initHeroTyping();
+  fixNavLogo();
+  initGaleri();
+  preloadVoices();
+  setTimeout(initGaleriSlider, 300);
+}
+
+// Tutup loading segera setelah DOM siap (tidak nunggu gambar)
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', () => setTimeout(dismissLoading, 600));
+} else {
+  setTimeout(dismissLoading, 600); // DOM sudah siap
+}
+// Fallback: kalau 3 detik masih muncul, paksa tutup
+setTimeout(dismissLoading, 3000);
 
 /* ================================================================
    GALERI IMAGE HANDLER
@@ -726,8 +734,23 @@ function setSendBtn(disabled) {
 /* ================================================================
    CALL OVERLAY — WA Style
 ================================================================ */
+/* ================================================================
+   VOICE CALL — dua arah: user bicara → AI jawab pakai TTS
+================================================================ */
+let recognition     = null;
+let callListening   = false;
+let callSilenceTimer = null;
+
 async function startCall() {
   if (callActive) return;
+
+  // Cek browser support
+  const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+  if (!SR) {
+    showToast('Browser kamu tidak mendukung fitur suara 😢', 3000);
+    return;
+  }
+
   const overlay = document.getElementById('call-overlay');
   const status  = document.getElementById('callStatus');
   const timer   = document.getElementById('callTimer');
@@ -740,7 +763,7 @@ async function startCall() {
   callSeconds   = 0;
   timer.textContent = '';
 
-  // Fix avatar img
+  // Fix avatar
   const avatarImg = overlay.querySelector('.call-avatar img');
   if (avatarImg) {
     avatarImg.style.display = 'block';
@@ -751,15 +774,15 @@ async function startCall() {
     };
   }
 
-  // Phase 1: Menghubungi 2 detik
+  // Phase 1: Menghubungi
   status.textContent = 'Menghubungi...';
-  await sleep(2000);
+  await sleep(1500);
   if (!callActive) return;
 
-  // Phase 2: Berdering 3 detik
+  // Phase 2: Berdering
   status.textContent = 'Berdering...';
   playRing();
-  await sleep(3000);
+  await sleep(2000);
   if (!callActive) return;
 
   // Phase 3: Terhubung
@@ -771,22 +794,149 @@ async function startCall() {
     timer.textContent = fmtTime(callSeconds);
   }, 1000);
 
-  // TTS greeting
-  speakTTS('Halo kak, selamat datang di Alatee Printing. Saya Ayla, ada yang bisa saya bantu kak?');
+  // Sapa pembuka
+  await speakTTSAsync('Halo kak! Selamat datang di Alatee Printing, saya Ayla. Ada yang bisa saya bantu kak?');
+  if (!callActive) return;
 
-  // Auto-end 10 detik setelah terhubung
-  callAutoEndTimer = setTimeout(() => {
-    if (callActive) endCall(true);
-  }, 10000);
+  // Mulai dengarkan user
+  startListening();
+}
+
+function startListening() {
+  if (!callActive || muteActive) return;
+  const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+  if (!SR) return;
+
+  const status = document.getElementById('callStatus');
+
+  recognition = new SR();
+  recognition.lang = 'id-ID';
+  recognition.continuous = false;
+  recognition.interimResults = false;
+  recognition.maxAlternatives = 1;
+
+  recognition.onstart = () => {
+    callListening = true;
+    if (status) status.textContent = '🎤 Mendengarkan...';
+  };
+
+  recognition.onresult = async (e) => {
+    callListening = false;
+    clearTimeout(callSilenceTimer);
+    const text = e.results[0][0].transcript.trim();
+    if (!text || !callActive) return;
+
+    if (status) status.textContent = 'Memproses...';
+
+    // Kirim ke AI, dapatkan respons teks
+    const aiReply = await getCallAIReply(text);
+    if (!callActive) return;
+
+    // Bacakan jawaban AI
+    await speakTTSAsync(aiReply);
+    if (!callActive) return;
+
+    // Dengarkan lagi
+    startListening();
+  };
+
+  recognition.onerror = (e) => {
+    callListening = false;
+    if (!callActive) return;
+    if (e.error === 'no-speech') {
+      // Tidak ada suara 5 detik → tanya lagi
+      callSilenceTimer = setTimeout(() => {
+        if (callActive && !callListening) {
+          speakTTSAsync('Masih ada kak? Silakan bicara ya 😊').then(() => {
+            if (callActive) startListening();
+          });
+        }
+      }, 1000);
+    } else {
+      if (callActive) startListening(); // coba lagi
+    }
+  };
+
+  recognition.onend = () => {
+    callListening = false;
+  };
+
+  try { recognition.start(); } catch(e) {}
+}
+
+async function getCallAIReply(userText) {
+  try {
+    // Tambah ke history percakapan call sementara
+    const callMessages = [
+      ...chatHistory,
+      { role: 'user', content: userText }
+    ];
+
+    const res = await fetch(API_PRIMARY, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ messages: callMessages, stream: false }),
+      signal: AbortSignal.timeout(12000)
+    });
+    if (!res.ok) throw new Error('primary failed');
+    const data = await res.json();
+    return data.text || 'Maaf kak, ada gangguan kecil. Silakan ulangi ya 😊';
+  } catch {
+    try {
+      const res2 = await fetch(API_FALLBACK, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ messages: [{ role: 'user', content: userText }], stream: false }),
+        signal: AbortSignal.timeout(10000)
+      });
+      const d = await res2.json();
+      return d.text || d.message || 'Maaf kak, coba hubungi via WhatsApp ya 😊';
+    } catch {
+      return 'Maaf kak, koneksi bermasalah. Silakan hubungi via WhatsApp ya 😊';
+    }
+  }
+}
+
+// TTS yang return Promise (resolve setelah selesai bicara)
+function speakTTSAsync(text) {
+  return new Promise(resolve => {
+    if (!('speechSynthesis' in window) || muteActive) { resolve(); return; }
+    stopTTS();
+
+    function doSpeak() {
+      const utter = new SpeechSynthesisUtterance(text);
+      utter.lang   = 'id-ID';
+      utter.rate   = 1.0;
+      utter.pitch  = 1.1;
+      utter.volume = 1.0;
+      const voices = speechSynthesis.getVoices();
+      const v =
+        voices.find(v => v.lang.startsWith('id') && /female|wanita/i.test(v.name)) ||
+        voices.find(v => v.lang.startsWith('id')) ||
+        voices.find(v => /female|woman/i.test(v.name));
+      if (v) utter.voice = v;
+      utter.onend   = resolve;
+      utter.onerror = resolve;
+      speechSynthesis.speak(utter);
+    }
+
+    if (speechSynthesis.getVoices().length > 0) doSpeak();
+    else speechSynthesis.addEventListener('voiceschanged', doSpeak, { once: true });
+  });
 }
 
 function endCall(auto = false) {
   callActive = false;
+  callListening = false;
   stopRing();
   stopTTS();
   clearInterval(callTimerInt);
   clearTimeout(callAutoEndTimer);
+  clearTimeout(callSilenceTimer);
   callTimerInt = null;
+
+  try { recognition?.stop(); recognition?.abort(); } catch(e) {}
+  recognition = null;
 
   const status = document.getElementById('callStatus');
   if (status) status.textContent = auto ? 'Panggilan Berakhir' : 'Panggilan Diakhiri';
@@ -805,7 +955,12 @@ function toggleMute() {
   muteActive = !muteActive;
   document.getElementById('muteBtn')?.classList.toggle('active', muteActive);
   showToast(muteActive ? 'Mikrofon dimatikan' : 'Mikrofon aktif');
-  if (muteActive) stopTTS();
+  if (muteActive) {
+    stopTTS();
+    try { recognition?.stop(); } catch(e) {}
+  } else if (callActive) {
+    startListening();
+  }
 }
 
 function toggleSpeaker() {

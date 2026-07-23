@@ -811,12 +811,6 @@ async function startCall() {
   startListening();
 }
 
-// ── NEW: state flags untuk continuous mic ──
-let isSpeaking   = false; // true saat TTS AI sedang jalan
-let isProcessing = false; // true saat menunggu respons API
-
-// Suppress browser's built-in click/beep sound when recognition starts
-// by playing a silent audio via AudioContext right before .start()
 function playSilent() {
   try {
     const ctx = new (window.AudioContext || window.webkitAudioContext)();
@@ -825,91 +819,127 @@ function playSilent() {
     src.buffer = buf;
     src.connect(ctx.destination);
     src.start(0);
-    setTimeout(() => ctx.close(), 200);
+    setTimeout(() => ctx.close(), 300);
   } catch(e) {}
 }
+
+/*
+  ALUR PANGGILAN:
+  startListening() → user bicara → onresult final
+    → getCallAIReply() → speakTTSAsync()
+    → selesai → startListening() lagi
+
+  Interrupt: onspeechstart deteksi user bicara saat TTS jalan
+    → stopTTS() → TTS resolve → startListening() lagi normal
+*/
+
+let callTTSAborted = false; // flag: TTS dipotong paksa oleh user
 
 function startListening() {
   if (!callActive || muteActive) return;
   const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
   if (!SR) return;
 
-  // Hentikan instance sebelumnya
   if (recognition) {
     try { recognition.abort(); } catch(e) {}
     recognition = null;
   }
 
   const status = document.getElementById('callStatus');
+  if (status) status.textContent = 'Mendengarkan...';
 
   recognition = new SR();
-  recognition.lang            = 'id-ID';
-  recognition.continuous      = true;  // MIC TERUS MENYALA — tidak pernah mati
-  recognition.interimResults  = true;  // deteksi awal suara untuk interrupt
+  recognition.lang           = 'id-ID';
+  recognition.continuous     = false;
+  recognition.interimResults = false;
   recognition.maxAlternatives = 1;
 
-  recognition.onstart = () => {
-    callListening = true;
-    if (status && !isSpeaking && !isProcessing) status.textContent = 'Mendengarkan...';
-  };
-
-  // User mulai bicara → potong TTS seketika
-  recognition.onspeechstart = () => {
-    if (isSpeaking) {
-      stopTTS();
-      isSpeaking = false;
-    }
-    if (status && !isProcessing) status.textContent = 'Mendengarkan...';
-  };
+  recognition.onstart = () => { callListening = true; };
 
   recognition.onresult = async (e) => {
-    const result = e.results[e.results.length - 1];
+    callListening = false;
+    const text = e.results[0][0].transcript.trim();
+    if (!text || !callActive) return;
 
-    // Interim: hanya interrupt TTS, jangan proses dulu
-    if (!result.isFinal) {
-      if (isSpeaking) { stopTTS(); isSpeaking = false; }
-      return;
+    if (recognition) {
+      try { recognition.abort(); } catch(e2) {}
+      recognition = null;
     }
 
-    // Final — abaikan kalau sedang proses atau mute
-    const text = result[0].transcript.trim();
-    if (!text || !callActive || muteActive || isProcessing) return;
-
-    isProcessing = true;
     if (status) status.textContent = 'Memproses...';
-
     const aiReply = await getCallAIReply(text);
-    if (!callActive) { isProcessing = false; return; }
+    if (!callActive) return;
 
-    isSpeaking = true;
+    callTTSAborted = false;
     if (status) status.textContent = 'Berbicara...';
-
     await speakTTSAsync(aiReply);
+    if (!callActive) return;
 
-    isSpeaking   = false;
-    isProcessing = false;
-    if (callActive && !muteActive && status) status.textContent = 'Mendengarkan...';
-    // mic tetap menyala (continuous) — tidak perlu restart
+    // Jeda singkat sebelum dengarkan lagi
+    setTimeout(() => { if (callActive && !muteActive) startListening(); }, 400);
   };
 
   recognition.onerror = (e) => {
-    if (!callActive) return;
-    if (e.error === 'aborted' || e.error === 'no-speech') return; // normal, abaikan
-    // Error lain: restart setelah jeda singkat
     callListening = false;
-    setTimeout(() => { if (callActive && !muteActive) startListening(); }, 600);
+    if (!callActive) return;
+    if (e.error === 'no-speech') {
+      // Tidak ada suara → tanya singkat lalu dengarkan lagi
+      callSilenceTimer = setTimeout(async () => {
+        if (!callActive || muteActive) return;
+        await speakTTSAsync('Masih ada kak?');
+        if (callActive && !muteActive) startListening();
+      }, 800);
+      return;
+    }
+    if (e.error === 'aborted') return;
+    // Error lain: coba lagi
+    setTimeout(() => { if (callActive && !muteActive) startListening(); }, 800);
   };
 
-  recognition.onend = () => {
-    callListening = false;
-    // Browser auto-stop recognition? Restart kalau call masih aktif
-    if (callActive && !muteActive) {
-      setTimeout(() => { if (callActive && !muteActive) startListening(); }, 300);
-    }
+  recognition.onend = () => { callListening = false; };
+
+  playSilent();
+  setTimeout(() => {
+    if (!callActive || muteActive) return;
+    try { recognition?.start(); } catch(e) {}
+  }, 150);
+}
+
+// speakTTSAsync versi interrupt-aware:
+// Kalau user mulai bicara saat AI ngomong, TTS dipotong
+// dan recognition baru dimulai untuk tangkap ucapan user
+function _hookInterrupt(utterance) {
+  const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+  if (!SR) return;
+
+  // Gunakan recognition sementara khusus untuk deteksi suara user
+  let interruptRec = new SR();
+  interruptRec.lang = 'id-ID';
+  interruptRec.continuous = false;
+  interruptRec.interimResults = true;
+  interruptRec.maxAlternatives = 1;
+
+  interruptRec.onspeechstart = () => {
+    // User mulai bicara → potong TTS
+    stopTTS(); // utterance.onend/onerror akan resolve speakTTSAsync
+    try { interruptRec.stop(); } catch(e) {}
+    interruptRec = null;
+    callTTSAborted = true;
+  };
+
+  interruptRec.onerror = () => {
+    try { interruptRec?.abort(); } catch(e) {}
+    interruptRec = null;
+  };
+  interruptRec.onend = () => {
+    interruptRec = null;
   };
 
   playSilent();
-  try { recognition.start(); } catch(e) {}
+  try { interruptRec.start(); } catch(e) { interruptRec = null; }
+
+  // Simpan ref agar bisa di-abort saat TTS selesai normal
+  utterance._interruptRec = interruptRec;
 }
 
 async function getCallAIReply(userText) {
@@ -945,7 +975,7 @@ async function getCallAIReply(userText) {
   }
 }
 
-// TTS yang return Promise (resolve setelah selesai bicara)
+// TTS yang return Promise — resolve saat selesai ATAU dipotong user
 function speakTTSAsync(text) {
   return new Promise(resolve => {
     if (!('speechSynthesis' in window) || muteActive) { resolve(); return; }
@@ -963,9 +993,20 @@ function speakTTSAsync(text) {
         voices.find(v => v.lang.startsWith('id')) ||
         voices.find(v => /female|woman/i.test(v.name));
       if (v) utter.voice = v;
-      utter.onend   = resolve;
-      utter.onerror = resolve;
+
+      const done = () => {
+        if (utter._interruptRec) {
+          try { utter._interruptRec.abort(); } catch(e) {}
+          utter._interruptRec = null;
+        }
+        resolve();
+      };
+      utter.onend   = done;
+      utter.onerror = done;
       speechSynthesis.speak(utter);
+
+      // Pasang pendengar interrupt jika sedang call
+      if (callActive) _hookInterrupt(utter);
     }
 
     if (speechSynthesis.getVoices().length > 0) doSpeak();
@@ -974,10 +1015,9 @@ function speakTTSAsync(text) {
 }
 
 function endCall(auto = false) {
-  callActive   = false;
+  callActive    = false;
   callListening = false;
-  isSpeaking   = false;
-  isProcessing = false;
+  callTTSAborted = false;
   stopRing();
   stopTTS();
   clearInterval(callTimerInt);
@@ -1007,13 +1047,12 @@ function toggleMute() {
   showToast(muteActive ? 'Mikrofon dimatikan' : 'Mikrofon aktif');
   if (muteActive) {
     stopTTS();
-    isSpeaking = false;
+    clearTimeout(callSilenceTimer);
     try { recognition?.abort(); } catch(e) {}
     recognition = null;
     const status = document.getElementById('callStatus');
     if (status) status.textContent = 'Mute';
   } else if (callActive) {
-    isProcessing = false;
     startListening();
   }
 }

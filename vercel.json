@@ -1,5 +1,4 @@
 {
-  "version": 2,
   "buildCommand": "echo 'No build needed'",
   "outputDirectory": "frontend",
   "rewrites": [
@@ -8,11 +7,9 @@
   ],
   "functions": {
     "api/pelanggan.js": {
-      "runtime": "edge",
       "maxDuration": 30
     },
     "api/pelanggan2.js": {
-      "runtime": "edge",
       "maxDuration": 25
     }
   },

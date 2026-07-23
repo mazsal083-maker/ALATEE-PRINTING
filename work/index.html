@@ -1,0 +1,734 @@
+<!DOCTYPE html>
+<html lang="id" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Alatee Printing – Cetak Berkualitas, Hasil Memuaskan</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Syne:wght@700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div id="loading-screen"></div>
+<nav class="nav">
+  <div class="nav-inner">
+    <a href="#home" class="nav-logo">
+      <div class="nav-logo-box" id="nav-logo-container">
+        <img id="nav-logo-img" src="logo.png" alt="Logo Alatee Printing" onerror="this.style.display='none'; document.getElementById('nav-logo-text').style.display='flex';">
+        <span class="nav-logo-text" id="nav-logo-text" style="display:none;">AP</span>
+      </div>
+      <span class="nav-brand">Alatee Printing</span>
+    </a>
+    <ul class="nav-links">
+      <li><a href="#layanan">Layanan</a></li>
+      <li><a href="#keunggulan">Keunggulan</a></li>
+      <li><a href="#harga">Harga</a></li>
+      <li><a href="#galeri">Proses</a></li>
+      <li><a href="#kontak">Kontak</a></li>
+    </ul>
+    <div class="nav-actions">
+      <button class="theme-toggle" id="themeToggle" title="Ganti tema">
+        <svg class="icon-sun" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364-6.364l-.707.707M6.343 17.657l-.707.707M17.657 17.657l-.707-.707M6.343 6.343l-.707-.707M12 7a5 5 0 100 10 5 5 0 000-10z"/></svg>
+        <svg class="icon-moon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12.79A9 9 0 1111.21 3a7 7 0 009.79 9.79z"/></svg>
+      </button>
+      <button class="btn btn-primary" onclick="openChat()" style="padding:9px 18px; font-size:13px;">
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" width="16" height="16"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z"/></svg>
+        Layanan Pelanggan
+      </button>
+      <button class="hamburger" id="hamburger" aria-label="Menu">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </div>
+</nav>
+
+<!-- MOBILE NAV -->
+<div class="nav-mobile" id="navMobile">
+  <ul>
+    <li><a href="#layanan" onclick="closeMobileNav()">Layanan</a></li>
+    <li><a href="#keunggulan" onclick="closeMobileNav()">Keunggulan</a></li>
+    <li><a href="#harga" onclick="closeMobileNav()">Harga</a></li>
+    <li><a href="#galeri" onclick="closeMobileNav()">Proses</a></li>
+    <li><a href="#kontak" onclick="closeMobileNav()">Kontak</a></li>
+  </ul>
+  <div class="mobile-cta" style="display:flex;flex-direction:column;gap:8px;margin-top:12px;">
+    <button onclick="openChat(); closeMobileNav();" class="btn btn-primary btn-lg" style="width:100%; justify-content:center;">
+      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" width="17" height="17"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z"/></svg>
+      Layanan Pelanggan
+    </a>
+  </div>
+</div>
+
+<!-- ===== MAIN PAGE ===== -->
+<div id="main-page">
+
+<!-- HERO -->
+<section class="hero" id="home">
+  <div class="hero-bg-photo">
+    <img src="latar.jpg" alt="Background" id="hero-bg-img" onerror="this.parentElement.style.display='none';">
+  </div>
+  <div class="hero-blob hero-blob-1"></div>
+  <div class="hero-blob hero-blob-2"></div>
+  <div class="hero-inner">
+    <div class="hero-content">
+      <div class="hero-eyebrow">Percetakan Terpercaya di Madura</div>
+      <h1 class="hero-title">
+        Cetak Lebih dari<br>
+        Sekadar<br>
+        <span class="hero-typing" id="typingText"></span>
+      </h1>
+      <p class="hero-desc">
+        Alatee Printing hadir untuk semua kebutuhan cetak Anda — dari banner besar hingga kartu nama kecil. Kualitas terjamin, harga terjangkau, pengerjaan cepat.
+      </p>
+      <div class="hero-actions">
+        <button onclick="openChat()" class="btn btn-primary btn-lg">
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" width="17" height="17"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z"/></svg>
+          Konsultasi Gratis
+        </button>
+        <a href="https://wa.me/6287765146075?text=Halo%20Alatee%20Printing!" target="_blank" class="btn btn-wa btn-lg">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" width="17" height="17"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+          Pesan Sekarang
+        </a>
+      </div>
+      <div class="hero-stats">
+        <div>
+          <div class="hero-stat-val"><span class="count-up" data-target="500" data-suffix="+">0</span></div>
+          <div class="hero-stat-label">Pelanggan Puas</div>
+        </div>
+        <div>
+          <div class="hero-stat-val"><span class="count-up" data-target="5" data-suffix=" Thn">0</span></div>
+          <div class="hero-stat-label">Pengalaman</div>
+        </div>
+        <div>
+          <div class="hero-stat-val"><span class="count-up" data-target="24" data-suffix=" Jam">0</span></div>
+          <div class="hero-stat-label">Pengerjaan Cepat</div>
+        </div>
+      </div>
+    </div>
+    <div class="hero-visual">
+      <div class="hero-mockup">
+        <div class="hero-mockup-bar">
+          <div class="hero-mockup-dot" style="background:#FF5F57;"></div>
+          <div class="hero-mockup-dot" style="background:#FEBC2E;"></div>
+          <div class="hero-mockup-dot" style="background:#28C840;"></div>
+          <div style="flex:1; background:var(--surface); border-radius:4px; height:22px; margin-left:8px;"></div>
+        </div>
+        <div class="hero-mockup-body">
+          <div class="hero-card-grid">
+            <div class="hero-card">
+              <div class="hero-card-icon">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><rect x="3" y="3" width="18" height="14" rx="2" stroke-width="2"/><path d="M3 9h18" stroke-width="2"/></svg>
+              </div>
+              <div class="hero-card-title">Banner</div>
+              <div class="hero-card-sub">Indoor & Outdoor</div>
+            </div>
+            <div class="hero-card">
+              <div class="hero-card-icon">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 7h18M3 12h18M3 17h10"/></svg>
+              </div>
+              <div class="hero-card-title">Kartu Nama</div>
+              <div class="hero-card-sub">Full Color</div>
+            </div>
+            <div class="hero-card">
+              <div class="hero-card-icon">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+              </div>
+              <div class="hero-card-title">Brosur</div>
+              <div class="hero-card-sub">Berbagai Ukuran</div>
+            </div>
+            <div class="hero-card">
+              <div class="hero-card-icon">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A2 2 0 013 12V7a4 4 0 014-4z"/></svg>
+              </div>
+              <div class="hero-card-title">Stiker</div>
+              <div class="hero-card-sub">Custom Shape</div>
+            </div>
+          </div>
+          <div style="text-align:center;">
+            <div class="hero-badge">
+              <span style="width:8px;height:8px;border-radius:50%;background:#1fba59;display:inline-block;animation:pulse 2s infinite;"></span>
+              Siap Cetak Sekarang
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- LAYANAN -->
+<section class="layanan" id="layanan">
+  <div class="section-inner">
+    <div class="section-header text-center reveal">
+      <span class="section-eyebrow">Layanan Kami</span>
+      <h2 class="section-title">Semua Kebutuhan Cetak<br><span style="color:var(--accent);">Ada di Sini</span></h2>
+      <p class="section-desc">Dari cetak kecil hingga besar, indoor hingga outdoor — kami siap membantu dengan kualitas terbaik.</p>
+    </div>
+    <div class="layanan-grid">
+      <div class="layanan-card reveal">
+        <div class="layanan-icon"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><rect x="3" y="3" width="18" height="14" rx="2" stroke-width="2"/><path d="M3 9h18" stroke-width="2"/></svg></div>
+        <div class="layanan-name">Banner & Spanduk</div>
+        <div class="layanan-desc">Indoor/outdoor, berbagai ukuran, bahan MMT & Flexi Korea</div>
+        <div class="layanan-price">Mulai Rp 15.000/m²</div>
+      </div>
+      <div class="layanan-card reveal reveal-delay-1">
+        <div class="layanan-icon"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M3 14h18M5 18h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"/></svg></div>
+        <div class="layanan-name">Kartu Nama</div>
+        <div class="layanan-desc">Glossy, matte, premium – desain elegan untuk bisnis Anda</div>
+        <div class="layanan-price">Mulai Rp 25.000/box</div>
+      </div>
+      <div class="layanan-card reveal reveal-delay-2">
+        <div class="layanan-icon"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg></div>
+        <div class="layanan-name">Brosur & Flyer</div>
+        <div class="layanan-desc">A4, A5, lipat 3 – cocok untuk promosi bisnis dan event</div>
+        <div class="layanan-price">Mulai Rp 45.000/100 lbr</div>
+      </div>
+      <div class="layanan-card reveal reveal-delay-1">
+        <div class="layanan-icon"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A2 2 0 013 12V7a4 4 0 014-4z"/></svg></div>
+        <div class="layanan-name">Stiker & Label</div>
+        <div class="layanan-desc">Vinyl, kertas, transparant – berbagai bentuk & ukuran</div>
+        <div class="layanan-price">Mulai Rp 50.000/m²</div>
+      </div>
+      <div class="layanan-card reveal reveal-delay-2">
+        <div class="layanan-icon"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg></div>
+        <div class="layanan-name">Roll Up Banner</div>
+        <div class="layanan-desc">85x200cm & 100x200cm – cocok pameran dan presentasi</div>
+        <div class="layanan-price">Mulai Rp 150.000</div>
+      </div>
+      <div class="layanan-card reveal reveal-delay-3">
+        <div class="layanan-icon"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/></svg></div>
+        <div class="layanan-name">Cetak Buku</div>
+        <div class="layanan-desc">Saddle stitch, perfect binding – katalog, majalah, annual report</div>
+        <div class="layanan-price">Hubungi untuk harga</div>
+      </div>
+      <div class="layanan-card reveal">
+        <div class="layanan-icon"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg></div>
+        <div class="layanan-name">Undangan & Souvenir</div>
+        <div class="layanan-desc">Undangan pernikahan, wisuda, ulang tahun – elegan & berkesan</div>
+        <div class="layanan-price">Hubungi untuk harga</div>
+      </div>
+      <div class="layanan-card reveal reveal-delay-1">
+        <div class="layanan-icon"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"/></svg></div>
+        <div class="layanan-name">Nota & Kwitansi</div>
+        <div class="layanan-desc">Nota pesanan, kwitansi usaha – profesional dan rapi</div>
+        <div class="layanan-price">Mulai Rp 35.000/buku</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- KEUNGGULAN -->
+<section class="keunggulan" id="keunggulan" style="background:var(--surface);">
+  <div class="section-inner">
+    <div class="section-header text-center reveal">
+      <span class="section-eyebrow">Mengapa Kami</span>
+      <h2 class="section-title">Kepercayaan Adalah<br>Prioritas Kami</h2>
+    </div>
+    <div class="keunggulan-grid">
+      <div class="keunggulan-card reveal">
+        <div class="keunggulan-icon"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg></div>
+        <div class="keunggulan-title">Pengerjaan Cepat</div>
+        <div class="keunggulan-desc">Proses cetak 24 jam untuk pesanan urgent tanpa mengorbankan kualitas hasil cetakan.</div>
+      </div>
+      <div class="keunggulan-card reveal reveal-delay-1">
+        <div class="keunggulan-icon"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 3l-2 5 9 13 9-13-2-5H5zm0 0h14M3 8h18M12 21L3 8m9 13l9-13"/></svg></div>
+        <div class="keunggulan-title">Kualitas Premium</div>
+        <div class="keunggulan-desc">Mesin cetak modern dan bahan berkualitas tinggi untuk hasil yang tajam dan tahan lama.</div>
+      </div>
+      <div class="keunggulan-card reveal reveal-delay-2">
+        <div class="keunggulan-icon"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg></div>
+        <div class="keunggulan-title">Harga Terjangkau</div>
+        <div class="keunggulan-desc">Harga kompetitif tanpa biaya tersembunyi. Diskon khusus untuk pemesanan dalam jumlah besar.</div>
+      </div>
+      <div class="keunggulan-card reveal reveal-delay-3">
+        <div class="keunggulan-icon"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21a4 4 0 01-4-4V5a2 2 0 012-2h4a2 2 0 012 2v12a4 4 0 01-4 4zm0 0h12a2 2 0 002-2v-4a2 2 0 00-2-2h-2.343M11 7.343l1.657-1.657a2 2 0 012.828 0l2.829 2.829a2 2 0 010 2.828l-8.486 8.485M7 17h.01"/></svg></div>
+        <div class="keunggulan-title">Desain Gratis</div>
+        <div class="keunggulan-desc">Tim desainer kami siap membantu membuat desain yang menarik dan sesuai keinginan Anda.</div>
+      </div>
+      <div class="keunggulan-card reveal">
+        <div class="keunggulan-icon"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/></svg></div>
+        <div class="keunggulan-title">Pengiriman Ke Mana Saja</div>
+        <div class="keunggulan-desc">Layanan pengiriman ke seluruh Indonesia. Bisa ambil langsung di toko atau dikirim ke lokasi Anda.</div>
+      </div>
+      <div class="keunggulan-card reveal reveal-delay-1">
+        <div class="keunggulan-icon"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"/></svg></div>
+        <div class="keunggulan-title">Layanan Ramah</div>
+        <div class="keunggulan-desc">Tim kami siap melayani konsultasi 7 hari seminggu. Kepuasan pelanggan adalah tujuan utama kami.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PROSES PEMESANAN -->
+<section class="proses" id="proses">
+  <div class="section-inner">
+    <div class="section-header text-center reveal">
+      <span class="section-eyebrow">Cara Pesan</span>
+      <h2 class="section-title">Mudah, Cepat, Terpercaya</h2>
+      <p class="section-desc">Proses pemesanan yang simple dan transparan dari awal hingga selesai.</p>
+    </div>
+    <div class="proses-steps">
+      <div class="proses-step reveal">
+        <div class="proses-step-num">01</div>
+        <div class="proses-step-title">Konsultasi</div>
+        <div class="proses-step-desc">Hubungi kami via chat AI atau WhatsApp. Ceritakan kebutuhan cetak Anda.</div>
+      </div>
+      <div class="proses-step reveal reveal-delay-1">
+        <div class="proses-step-num">02</div>
+        <div class="proses-step-title">Kirim Desain</div>
+        <div class="proses-step-desc">Kirim file desain (CDR, AI, PDF, PNG resolusi tinggi) atau minta bantuan desainer kami.</div>
+      </div>
+      <div class="proses-step reveal reveal-delay-2">
+        <div class="proses-step-num">03</div>
+        <div class="proses-step-title">Konfirmasi & Bayar</div>
+        <div class="proses-step-desc">Kami kirim penawaran harga, setelah setuju lakukan pembayaran DP 50%.</div>
+      </div>
+      <div class="proses-step reveal reveal-delay-3">
+        <div class="proses-step-num">04</div>
+        <div class="proses-step-title">Terima Pesanan</div>
+        <div class="proses-step-desc">Pesanan selesai dan siap diambil atau dikirim ke alamat Anda. Lunas setelah terima!</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- HARGA -->
+<section class="harga" id="harga">
+  <div class="section-inner">
+    <div class="section-header text-center reveal">
+      <span class="section-eyebrow">Daftar Harga</span>
+      <h2 class="section-title">Harga Transparan,<br>Tidak Ada Biaya Tersembunyi</h2>
+      <p class="section-desc">Harga mulai dari yang hemat hingga premium sesuai kebutuhan. Hubungi kami untuk penawaran custom.</p>
+    </div>
+    <div class="harga-grid">
+      <div class="harga-card reveal reveal-delay-1">
+        <div class="harga-name">Paket Starter</div>
+        <div class="harga-desc">Cocok untuk usaha baru yang ingin mulai branding</div>
+        <div class="harga-price">Rp 50rb</div>
+        <div class="harga-price-note">mulai dari / item</div>
+        <ul class="harga-features">
+          <li><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/></svg>Kartu nama 250 pcs</li>
+          <li><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/></svg>Stiker label 100 pcs</li>
+          <li><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/></svg>Brosur A5 100 lembar</li>
+          <li><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/></svg>Selesai 2–3 hari</li>
+        </ul>
+        <a href="https://wa.me/6281234567890?text=Halo%20Alatee%20Printing%2C%20saya%20tertarik%20Paket%20Starter!" target="_blank" class="btn btn-outline" style="width:100%; justify-content:center;">Pesan Paket Ini</a>
+      </div>
+      <div class="harga-card featured reveal reveal-delay-2">
+        <div class="harga-badge-featured">Terlaris</div>
+        <div class="harga-name">Paket Promosi</div>
+        <div class="harga-desc">Paket lengkap untuk promosi event dan usaha Anda</div>
+        <div class="harga-price">Rp 250rb</div>
+        <div class="harga-price-note">per paket / bisa custom</div>
+        <ul class="harga-features">
+          <li><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/></svg>Banner 1x2m full color</li>
+          <li><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/></svg>Flyer A5 500 lembar</li>
+          <li><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/></svg>Kartu nama 500 pcs</li>
+          <li><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/></svg>X-Banner 60x160cm</li>
+          <li><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/></svg>Selesai 24 jam</li>
+        </ul>
+        <a href="https://wa.me/6281234567890?text=Halo%20Alatee%20Printing%2C%20saya%20tertarik%20Paket%20Promosi!" target="_blank" class="btn btn-primary" style="width:100%; justify-content:center;">Pesan Paket Ini</a>
+      </div>
+      <div class="harga-card reveal reveal-delay-3">
+        <div class="harga-name">Paket Custom</div>
+        <div class="harga-desc">Solusi cetak skala besar untuk perusahaan dan instansi</div>
+        <div class="harga-price">Nego</div>
+        <div class="harga-price-note">sesuai kebutuhan Anda</div>
+        <ul class="harga-features">
+          <li><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/></svg>Semua jenis cetak</li>
+          <li><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/></svg>Quantity besar (diskon)</li>
+          <li><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/></svg>Desain gratis</li>
+          <li><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/></svg>Pengiriman ke seluruh Indonesia</li>
+        </ul>
+        <a href="https://wa.me/6281234567890?text=Halo%20Alatee%20Printing%2C%20saya%20ingin%20konsultasi%20Paket%20Custom!" target="_blank" class="btn btn-secondary" style="width:100%; justify-content:center;">Konsultasi Gratis</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- GALERI / PORTFOLIO -->
+<section class="galeri" id="galeri">
+  <div class="section-inner">
+    <div class="section-header text-center reveal">
+      <span class="section-eyebrow">Proses Pengerjaan</span>
+      <h2 class="section-title">Dari Desain Hingga <span style="color:var(--accent);">Jadi</span></h2>
+      <p class="section-desc">Setiap pesanan kami kerjakan dengan teliti — mulai dari persiapan file, cetak, hingga finishing berkualitas.</p>
+    </div>
+    <div class="galeri-grid">
+      <div class="galeri-item reveal" style="position:relative; overflow:hidden;">
+        <img src="foto1.jpg" alt="Persiapan File" style="width:100%;height:100%;object-fit:cover;position:absolute;inset:0;" onerror="this.style.display='none';">
+        <span class="galeri-emoji" style="position:relative;z-index:1;">
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" width="32" height="32"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+        </span>
+        <div class="galeri-item-label">01 · Persiapan File Desain</div>
+      </div>
+      <div class="galeri-item reveal reveal-delay-1" style="position:relative; overflow:hidden;">
+        <img src="foto2.jpg" alt="Proses Cetak" style="width:100%;height:100%;object-fit:cover;position:absolute;inset:0;" onerror="this.style.display='none';">
+        <span class="galeri-emoji" style="position:relative;z-index:1;">
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" width="32" height="32"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"/></svg>
+        </span>
+        <div class="galeri-item-label">02 · Proses Cetak Mesin</div>
+      </div>
+      <div class="galeri-item reveal reveal-delay-2" style="position:relative; overflow:hidden;">
+        <img src="foto3.jpg" alt="Pemotongan" style="width:100%;height:100%;object-fit:cover;position:absolute;inset:0;" onerror="this.style.display='none';">
+        <span class="galeri-emoji" style="position:relative;z-index:1;">
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" width="32" height="32"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M14.121 14.121L19 19m-7-7l7-7m-7 7l-2.879 2.879M12 12L9.121 9.121m0 5.758a3 3 0 10-4.243 4.243 3 3 0 004.243-4.243zm0-5.758a3 3 0 10-4.243-4.243 3 3 0 004.243 4.243z"/></svg>
+        </span>
+        <div class="galeri-item-label">03 · Pemotongan & Trimming</div>
+      </div>
+      <div class="galeri-item reveal reveal-delay-1" style="position:relative; overflow:hidden;">
+        <img src="foto4.jpg" alt="Finishing" style="width:100%;height:100%;object-fit:cover;position:absolute;inset:0;" onerror="this.style.display='none';">
+        <span class="galeri-emoji" style="position:relative;z-index:1;">
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" width="32" height="32"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z"/></svg>
+        </span>
+        <div class="galeri-item-label">04 · Finishing & Laminasi</div>
+      </div>
+      <div class="galeri-item reveal reveal-delay-2" style="position:relative; overflow:hidden;">
+        <img src="foto5.jpg" alt="Siap Kirim" style="width:100%;height:100%;object-fit:cover;position:absolute;inset:0;" onerror="this.style.display='none';">
+        <span class="galeri-emoji" style="position:relative;z-index:1;">
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" width="32" height="32"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/></svg>
+        </span>
+        <div class="galeri-item-label">05 · Packing & Siap Kirim</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- KATA PELANGGAN / TESTIMONI -->
+<section class="testimoni" id="testimoni" style="background:var(--surface);padding:80px 0;">
+  <div class="section-inner">
+    <div class="section-header text-center reveal">
+      <span class="section-eyebrow">Testimoni</span>
+      <h2 class="section-title">Apa Kata <span style="color:var(--accent);">Pelanggan Kami</span></h2>
+      <p class="section-desc">Kepercayaan pelanggan adalah kebanggaan terbesar kami.</p>
+    </div>
+    <div class="testimoni-grid">
+
+      <!-- Testimoni 1 -->
+      <div class="testimoni-card reveal">
+        <div class="testimoni-stars">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" width="16" height="16"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" width="16" height="16"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" width="16" height="16"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" width="16" height="16"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" width="16" height="16"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+        </div>
+        <p class="testimoni-text">"Banner spanduk untuk acara nikahan saya hasilnya luar biasa! Warna tajam, bahan tebal, dan selesai tepat waktu. Sudah 3 kali pesan di sini, nggak pernah kecewa!"</p>
+        <div class="testimoni-author">
+          <div class="testimoni-avatar">RH</div>
+          <div>
+            <div class="testimoni-name">Rahmad Hidayat</div>
+            <div class="testimoni-role">Pelanggan Pamekasan</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Testimoni 2 -->
+      <div class="testimoni-card reveal reveal-delay-1">
+        <div class="testimoni-stars">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" width="16" height="16"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" width="16" height="16"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" width="16" height="16"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" width="16" height="16"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" width="16" height="16"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+        </div>
+        <p class="testimoni-text">"Kartu nama bisnis saya cetaknya rapi banget, glossy-nya mantap! Tim Alatee juga bantu revisi desain tanpa ribet. Recommended banget buat yang cari percetakan di Madura!"</p>
+        <div class="testimoni-author">
+          <div class="testimoni-avatar">SF</div>
+          <div>
+            <div class="testimoni-name">Siti Fatimah</div>
+            <div class="testimoni-role">Pemilik UMKM, Sumenep</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Testimoni 3 -->
+      <div class="testimoni-card reveal reveal-delay-2">
+        <div class="testimoni-stars">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" width="16" height="16"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" width="16" height="16"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" width="16" height="16"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" width="16" height="16"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" width="16" height="16"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+        </div>
+        <p class="testimoni-text">"Pesan flyer promosi 500 lembar, harganya bersahabat dan kualitas cetak sangat memuaskan. Pengiriman cepat sampai, packing juga aman. Alatee Printing memang juara!"</p>
+        <div class="testimoni-author">
+          <div class="testimoni-avatar">AW</div>
+          <div>
+            <div class="testimoni-name">Ahmad Wafi</div>
+            <div class="testimoni-role">Event Organizer, Bangkalan</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Testimoni 4 -->
+      <div class="testimoni-card reveal reveal-delay-3">
+        <div class="testimoni-stars">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" width="16" height="16"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" width="16" height="16"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" width="16" height="16"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" width="16" height="16"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" width="16" height="16"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+        </div>
+        <p class="testimoni-text">"Roll up banner untuk pameran sekolah kami hasilnya profesional banget! Konsultasinya mudah lewat chat AI-nya yang responsif. Pasti balik lagi order di sini deh."</p>
+        <div class="testimoni-author">
+          <div class="testimoni-avatar">NR</div>
+          <div>
+            <div class="testimoni-name">Nurul Rohma</div>
+            <div class="testimoni-role">Guru SDN, Pamekasan</div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- CTA BAND -->
+<div class="cta-band">
+  <div class="cta-band-inner">
+    <h2 class="cta-band-title">Siap Mulai Cetak Sekarang?</h2>
+    <p class="cta-band-desc">Hubungi kami via Konsultasi atau WhatsApp dan dapatkan konsultasi desain gratis. Tim kami siap membantu 7 hari seminggu!</p>
+    <div class="cta-band-actions">
+      <button onclick="openChat()" class="btn btn-white btn-lg">
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" width="17" height="17"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z"/></svg>
+        Chat dengan Ayla
+      </button>
+      <a href="https://wa.me/6287765146075?text=Halo%20Alatee%20Printing%2C%20saya%20mau%20pesan%20cetak!" target="_blank" class="btn btn-ghost-white btn-lg">WhatsApp Kami</a>
+    </div>
+  </div>
+</div>
+
+<!-- KONTAK & LOKASI -->
+<section class="kontak" id="kontak" style="position:relative; overflow:hidden;">
+  <div class="kontak-bg-photo">
+    <img src="latar2.jpg" alt="Background Kontak" onerror="this.parentElement.style.display='none';">
+  </div>
+  <div class="section-inner" style="position:relative;z-index:2;">
+    <div class="section-header reveal">
+      <span class="section-eyebrow">Kontak & Lokasi</span>
+      <h2 class="section-title">Temukan Kami</h2>
+      <p class="section-desc">Datang langsung ke toko kami atau hubungi via WA. Kami senang melayani Anda!</p>
+    </div>
+    <div class="kontak-grid">
+      <div class="kontak-info">
+        <div class="kontak-item reveal reveal-delay-1">
+          <div class="kontak-item-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+          </div>
+          <div>
+            <div class="kontak-item-label">Alamat Toko</div>
+            <div class="kontak-item-value">Jl. Raya Pesantren Annuqayah ,Guluk Guluk<br>Sumenep, Madura, Jawa Timur 69493</div>
+          </div>
+        </div>
+        <div class="kontak-item reveal reveal-delay-2">
+          <div class="kontak-item-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+          </div>
+          <div>
+            <div class="kontak-item-label">WhatsApp / Telpon</div>
+            <div class="kontak-item-value"><a href="https://wa.me/6287765146075" target="_blank">+62 877-6514-6075</a></div>
+          </div>
+        </div>
+        <div class="kontak-item reveal reveal-delay-3">
+          <div class="kontak-item-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+          </div>
+          <div>
+            <div class="kontak-item-label">Jam Operasional</div>
+            <div class="kontak-item-value">Senin – Sabtu: 08.00 – 21.00<br>Minggu: 09.00 – 17.00</div>
+          </div>
+        </div>
+        <div class="kontak-item reveal">
+          <div class="kontak-item-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>
+          </div>
+          <div>
+            <div class="kontak-item-label">Email</div>
+            <div class="kontak-item-value"><a href="mailto:alateeprinting@gmail.com" style="color:var(--accent);">alateeprinting@gmail.com</a></div>
+          </div>
+        </div>
+         <div class="reveal" style="margin-top:8px;">
+  <div style="font-size:14px; font-weight:600; color:var(--text); margin-bottom: 8px;">Sosial Media</div>
+  <div style="display:flex; gap:16px; flex-wrap:wrap; align-items: center;">
+        <a href="https://facebook.com/alateeprinting" target="_blank" title="Facebook" style="color: #1877F2; display: inline-flex;">
+      <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" viewBox="0 0 24 24">
+        <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/>
+      </svg>
+    </a>
+    <a href="https://www.instagram.com/a.latee.printing?igsh=MTZ0MjE4OTh5Zzk3Zg==" target="_blank" title="Instagram" style="color: #E1306C; display: inline-flex;">
+      <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" viewBox="0 0 24 24">
+        <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.051.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 1 0 0 12.324 6.162 6.162 0 0 0 0-12.324zM12 16a4 4 0 1 1 0-8 4 4 0 0 1 0 8zm6.406-11.845a1.44 1.44 0 1 0 0 2.881 1.44 1.44 0 0 0 0-2.881z"/>
+      </svg>
+    </a>
+    <a href="https://www.tiktok.com/@a.latee.printing?_r=1&_t=ZS-98EiQDM9Y2B" target="_blank" title="TikTok" style="color: var(--text); display: inline-flex;">
+      <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" viewBox="0 0 24 24">
+        <path d="M12.525.02c1.31 0 2.585.342 3.71 1.006A7.458 7.458 0 0 1 18.73 4.98a7.378 7.378 0 0 0 2.27-.478V8.16a10.957 10.957 0 0 1-4.736-1.077v7.502a6.57 6.57 0 0 1-1.927 4.653c-2.584 2.583-6.76 2.583-9.344 0a6.602 6.602 0 0 1 0-9.343 6.57 6.57 0 0 1 4.66-1.932c.365 0 .733.03 1.096.09v3.665c-.365-.075-.733-.11-1.096-.11a2.915 2.915 0 0 0-2.07.855 2.932 2.932 0 0 0 0 4.143c1.14 1.147 2.992 1.147 4.14 0a2.915 2.915 0 0 0 .857-2.072V0h3.695z"/>
+      </svg>
+    </a>
+  </div>
+</div>
+</div>
+      <div class="kontak-map reveal reveal-delay-2">
+        <div class="map-placeholder">
+          <div class="map-pin"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" width="28" height="28"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/></svg></div>
+          <div style="font-weight:600; font-size:15px; color:var(--text-primary);">Alatee Printing</div>
+          <div>Sumenep, Madura</div>
+          <a href="https://maps.google.com/?q=Pamekasan,Madura,Jawa+Timur" target="_blank" class="btn btn-primary" style="margin-top:12px;">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" width="16" height="16"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+            Buka di Google Maps
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-inner">
+    <div>
+      <div class="footer-brand-name">Alatee Printing</div>
+      <div class="footer-brand-desc">Percetakan digital berkualitas tinggi untuk semua kebutuhan bisnis dan personal Anda. Harga terjangkau, hasil memuaskan, pengerjaan cepat.</div>
+      <div class="footer-socials">
+        <a href="https://facebook.com/alateeprinting" target="_blank" class="footer-social" title="Facebook">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>
+        </a>
+        <a href="https://instagram.com/alateeprinting" target="_blank" class="footer-social" title="Instagram">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zM12 16a4 4 0 110-8 4 4 0 010 8zm6.406-11.845a1.44 1.44 0 100 2.881 1.44 1.44 0 000-2.881z"/></svg>
+        </a>
+        <a href="https://wa.me/6281234567890" target="_blank" class="footer-social" title="WhatsApp">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+        </a>
+      </div>
+    </div>
+    <div>
+      <div class="footer-col-title">Layanan</div>
+      <ul class="footer-links">
+        <li><a href="#layanan">Banner & Spanduk</a></li>
+        <li><a href="#layanan">Kartu Nama</a></li>
+        <li><a href="#layanan">Brosur & Flyer</a></li>
+        <li><a href="#layanan">Stiker & Label</a></li>
+        <li><a href="#layanan">Roll Up Banner</a></li>
+        <li><a href="#layanan">Cetak Buku</a></li>
+      </ul>
+    </div>
+    <div>
+      <div class="footer-col-title">Informasi</div>
+      <ul class="footer-links">
+        <li><a href="#keunggulan">Mengapa Kami</a></li>
+        <li><a href="#harga">Daftar Harga</a></li>
+        <li><a href="#galeri">Proses</a></li>
+        <li><a href="#proses">Cara Pesan</a></li>
+        <li><a href="#kontak">Kontak</a></li>
+      </ul>
+    </div>
+    <div>
+      <div class="footer-col-title">Hubungi</div>
+      <ul class="footer-links">
+        <li><a href="https://wa.me/6281234567890" target="_blank">WhatsApp</a></li>
+        <li><a href="tel:+6281234567890">Telepon</a></li>
+        <li><a href="mailto:alateeprinting@gmail.com">Email</a></li>
+        <li><a href="https://maps.google.com/?q=Pamekasan,Madura" target="_blank">Google Maps</a></li>
+      </ul>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <span>© 2026 Alatee Printing. Semua hak dilindungi.</span>
+    <span>Sumenep, Madura – Jawa Timur</span>
+  </div>
+</footer>
+
+</div><!-- end main-page -->
+
+<!-- ===== CHAT PAGE ===== -->
+<div id="chat-page" style="display:none;">
+  <div class="chat-header">
+    <button class="chat-back-btn" onclick="closeChat()" title="Kembali">
+      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/></svg>
+    </button>
+    <div class="chat-header-avatar">
+      <img src="logo.png" alt="Ayla" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+      <div class="chat-header-avatar-fallback" style="display:none;">AP</div>
+    </div>
+    <div class="chat-header-info">
+      <div class="chat-header-name">Ayla</div>
+      <div class="chat-header-status">
+        <span class="chat-status-dot"></span> Alatee Printing – Online
+      </div>
+    </div>
+    <div class="chat-header-actions">
+      <button class="chat-hdr-btn" onclick="startCall()" title="Telepon">
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"/></svg>
+      </button>
+    </div>
+  </div>
+
+  <div class="chat-messages" id="chatMessages">
+    <!-- messages injected by JS -->
+  </div>
+
+  <div class="chat-input-area">
+    <div class="chat-input-preview" id="filePreview">
+      <span class="chat-input-preview-name" id="filePreviewName">file.jpg</span>
+      <div class="chat-input-preview-close" onclick="removeFile()"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" width="12" height="12"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M6 18L18 6M6 6l12 12"/></svg></div>
+    </div>
+    <div class="chat-input-row">
+      <label class="chat-input-btn" title="Lampirkan file">
+        <input type="file" id="fileInput" accept="image/*,.pdf,.doc,.docx,.cdr,.ai" style="display:none;" onchange="handleFileAttach(this)">
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.172 7l-6.586 6.586a2 2 0 102.828 2.828l6.414-6.586a4 4 0 00-5.656-5.656l-6.415 6.585a6 6 0 108.486 8.486L20.5 13"/></svg>
+      </label>
+      <div class="chat-input-wrap" id="chatInput" contenteditable="true" data-placeholder="Ketik pesan..." onkeydown="handleInputKeydown(event)"></div>
+      <button class="chat-send-btn" id="sendBtn" onclick="sendMessage()" title="Kirim">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" width="20" height="20">
+  <path d="M8 5v14l11-7z"/>
+</svg>
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- ===== CALL OVERLAY ===== -->
+<div id="call-overlay">
+  <div class="call-card">
+    <div class="call-avatar">
+      <img src="logo.png" alt="Ayla" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+      <div class="call-avatar-icon" style="display:none;">AP</div>
+    </div>
+    <div class="call-name">Ayla</div>
+    <div class="call-number">Alatee Printing</div>
+    <div class="call-status" id="callStatus">Menghubungi...</div>
+    <div class="call-timer" id="callTimer"></div>
+    <div class="call-buttons">
+      <div style="display:flex;flex-direction:column;align-items:center;gap:4px;">
+        <button class="call-btn call-btn-mute" id="muteBtn" onclick="toggleMute()" title="Mute">
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z"/></svg>
+        </button>
+        <div class="call-btn-label">Mute</div>
+      </div>
+      <div style="display:flex;flex-direction:column;align-items:center;gap:4px;">
+        <button class="call-btn call-btn-end" onclick="endCall()" title="Akhiri Panggilan">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" width="24" height="24">
+  <path d="M12 9c-2.33 0-4.52.37-6.57 1.05v3.01c0 .38.23.72.57.85 1.95.74 4.07 1.15 6.27 1.15s4.32-.41 6.27-1.15c.34-.13.57-.47.57-.85v-3.01C16.52 9.37 14.33 9 12 9z"/>
+</svg>
+        </button>
+        <div class="call-btn-label">Akhiri</div>
+      </div>
+      <div style="display:flex;flex-direction:column;align-items:center;gap:4px;">
+        <button class="call-btn call-btn-speaker" id="speakerBtn" onclick="toggleSpeaker()" title="Speaker">
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.536 8.464a5 5 0 010 7.072M12 6v12m0-12l-4 4H5a1 1 0 00-1 1v2a1 1 0 001 1h3l4 4V6z"/></svg>
+        </button>
+        <div class="call-btn-label">Speaker</div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+
+<!-- TOAST -->
+<div class="toast-wrap" id="toastWrap"></div>
+
+<script src="script.js"></script>
+</body>
+</html>

@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>API Debug Test</title>
+<style>
+  body { font-family: monospace; background: #0d1117; color: #e6edf3; padding: 20px; font-size: 13px; }
+  h2 { color: #58a6ff; }
+  .box { background: #161b22; border: 1px solid #30363d; border-radius: 8px; padding: 16px; margin: 12px 0; }
+  .ok { color: #3fb950; } .err { color: #f85149; } .warn { color: #d29922; } .info { color: #58a6ff; }
+  button { background: #238636; color: #fff; border: none; padding: 10px 20px; border-radius: 6px; cursor: pointer; margin: 4px; font-size: 13px; }
+  button:hover { background: #2ea043; }
+  button.secondary { background: #1f6feb; }
+  #log { white-space: pre-wrap; word-break: break-all; max-height: 400px; overflow-y: auto; }
+  input { background: #0d1117; border: 1px solid #30363d; color: #e6edf3; padding: 8px 12px; border-radius: 6px; width: 100%; box-sizing: border-box; margin: 4px 0; font-family: monospace; }
+</style>
+</head>
+<body>
+<h2>🔍 Alatee Printing — API Diagnostics</h2>
+
+<div class="box">
+  <b class="info">Step 1: Cek koneksi internet dari server</b><br><br>
+  <button onclick="testInternet()">Test Internet</button>
+  <button onclick="testGeminiDirect()" class="secondary">Test Gemini Direct</button>
+  <button onclick="testGroqDirect()" class="secondary">Test Groq Direct</button>
+</div>
+
+<div class="box">
+  <b class="info">Step 2: Masukkan API Key untuk test langsung</b><br><br>
+  <input id="geminiKey" placeholder="Masukkan Gemini API Key..." type="password">
+  <input id="groqKey" placeholder="Masukkan Groq API Key..." type="password">
+  <br><br>
+  <button onclick="testGeminiWithKey()">Test Gemini dengan Key</button>
+  <button onclick="testGroqWithKey()" class="secondary">Test Groq dengan Key</button>
+</div>
+
+<div class="box">
+  <b class="info">Step 3: Test endpoint backend</b><br><br>
+  <button onclick="testBackend('/api/pelanggan')">Test /api/pelanggan (Gemini)</button>
+  <button onclick="testBackend('/api/pelanggan2')" class="secondary">Test /api/pelanggan2 (Groq)</button>
+</div>
+
+<div class="box">
+  <b>Log Output:</b>
+  <button onclick="clearLog()" style="background:#6e7681;float:right;padding:4px 10px;font-size:11px">Clear</button>
+  <br><br>
+  <div id="log">Tekan tombol di atas untuk mulai test...\n</div>
+</div>
+
+<script>
+function log(msg, type='') {
+  const el = document.getElementById('log');
+  const time = new Date().toLocaleTimeString('id-ID');
+  const cls = type === 'ok' ? '\x1b ok' : type === 'err' ? '\x1b err' : type === 'warn' ? '\x1b warn' : '';
+  el.innerHTML += `<span class="${type}">[${time}] ${msg}</span>\n`;
+  el.scrollTop = el.scrollHeight;
+}
+function clearLog() { document.getElementById('log').innerHTML = ''; }
+
+async function testInternet() {
+  log('Testing koneksi internet...', 'info');
+  try {
+    const r = await fetch('https://httpbin.org/get', { signal: AbortSignal.timeout(5000) });
+    if (r.ok) log('✅ Koneksi internet: OK', 'ok');
+    else log('⚠️ httpbin.org: HTTP ' + r.status, 'warn');
+  } catch(e) {
+    log('❌ Koneksi internet GAGAL: ' + e.message, 'err');
+    log('   → Server lokal tidak bisa akses internet, atau firewall memblokir', 'warn');
+  }
+}
+
+async function testGeminiDirect() {
+  const key = document.getElementById('geminiKey').value;
+  if (!key) { log('⚠️ Masukkan Gemini API Key dulu di Step 2', 'warn'); return; }
+  await testGeminiWithKey();
+}
+
+async function testGeminiWithKey() {
+  const key = document.getElementById('geminiKey').value;
+  if (!key) { log('⚠️ Masukkan Gemini API Key di field Step 2', 'warn'); return; }
+  
+  log('Testing Gemini API dengan key: ' + key.slice(0,8) + '...', 'info');
+  try {
+    const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${key}`;
+    const r = await fetch(url, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        contents: [{ role: 'user', parts: [{ text: 'Halo, jawab dengan satu kata saja.' }] }],
+        generationConfig: { maxOutputTokens: 20 }
+      }),
+      signal: AbortSignal.timeout(15000)
+    });
+    const txt = await r.text();
+    if (r.ok) {
+      const data = JSON.parse(txt);
+      const reply = data?.candidates?.[0]?.content?.parts?.[0]?.text || '(kosong)';
+      log('✅ Gemini API OK! Respons: ' + reply, 'ok');
+    } else {
+      log('❌ Gemini error HTTP ' + r.status + ': ' + txt.slice(0, 300), 'err');
+      if (r.status === 400) log('   → API Key tidak valid atau format request salah', 'warn');
+      if (r.status === 403) log('   → API Key tidak punya akses / belum diaktifkan', 'warn');
+      if (r.status === 404) log('   → Model tidak ditemukan (gemini-2.5-flash)', 'warn');
+      if (r.status === 429) log('   → Rate limit / quota habis', 'warn');
+    }
+  } catch(e) {
+    log('❌ Gemini GAGAL: ' + e.message, 'err');
+    if (e.message.includes('timeout')) log('   → Timeout — server tidak bisa reach api.google.com', 'warn');
+    if (e.message.includes('fetch')) log('   → Network error — cek koneksi / CORS / firewall', 'warn');
+  }
+}
+
+async function testGroqWithKey() {
+  const key = document.getElementById('groqKey').value;
+  if (!key) { log('⚠️ Masukkan Groq API Key di field Step 2', 'warn'); return; }
+
+  log('Testing Groq API dengan key: ' + key.slice(0,8) + '...', 'info');
+  try {
+    const r = await fetch('https://api.groq.com/openai/v1/chat/completions', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer ' + key
+      },
+      body: JSON.stringify({
+        model: 'llama-3.3-70b-versatile',
+        messages: [{ role: 'user', content: 'Halo, jawab satu kata.' }],
+        max_tokens: 20,
+        stream: false
+      }),
+      signal: AbortSignal.timeout(15000)
+    });
+    const txt = await r.text();
+    if (r.ok) {
+      const data = JSON.parse(txt);
+      const reply = data?.choices?.[0]?.message?.content || '(kosong)';
+      log('✅ Groq API OK! Respons: ' + reply, 'ok');
+    } else {
+      log('❌ Groq error HTTP ' + r.status + ': ' + txt.slice(0, 300), 'err');
+      if (r.status === 401) log('   → API Key salah / tidak valid', 'warn');
+      if (r.status === 429) log('   → Rate limit Groq (free tier)', 'warn');
+      if (r.status === 404) log('   → Model llama-3.3-70b-versatile tidak tersedia', 'warn');
+    }
+  } catch(e) {
+    log('❌ Groq GAGAL: ' + e.message, 'err');
+  }
+}
+
+async function testGroqDirect() {
+  const key = document.getElementById('groqKey').value;
+  if (!key) { log('⚠️ Masukkan Groq API Key dulu di Step 2', 'warn'); return; }
+  await testGroqWithKey();
+}
+
+async function testBackend(endpoint) {
+  log(`Testing backend endpoint: ${endpoint}`, 'info');
+  try {
+    const r = await fetch(endpoint, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        messages: [{ role: 'user', content: 'Halo' }],
+        stream: false
+      }),
+      signal: AbortSignal.timeout(30000)
+    });
+    const txt = await r.text();
+    log(`HTTP ${r.status} dari ${endpoint}:`, r.ok ? 'ok' : 'err');
+    try {
+      const data = JSON.parse(txt);
+      if (data.text) {
+        log('✅ Respons AI: ' + data.text.slice(0, 200), 'ok');
+      } else if (data.error) {
+        log('❌ Error dari backend: ' + JSON.stringify(data), 'err');
+        if (data.details) log('   Detail: ' + data.details.slice(0, 400), 'warn');
+      } else {
+        log('⚠️ Respons tidak terduga: ' + txt.slice(0, 300), 'warn');
+      }
+    } catch(_) {
+      log('Raw response: ' + txt.slice(0, 300), 'warn');
+    }
+  } catch(e) {
+    log(`❌ Fetch ke ${endpoint} GAGAL: ` + e.message, 'err');
+    if (e.message.includes('fetch')) log('   → Endpoint tidak ada atau server tidak jalan', 'warn');
+  }
+}
+
+log('Halaman diagnostics siap. Mulai dari Step 1 atau langsung Step 3.', 'info');
+</script>
+</body>
+</html>
